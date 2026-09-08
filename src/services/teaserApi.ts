@@ -242,3 +242,58 @@ export async function processVideoTeaser(
     return processVideoTeaserMock(videoInfo, token, onProgress);
   }
 }
+
+/**
+ * Fetches the logged-in user's last generated teaser from MongoDB.
+ */
+export async function fetchLastGeneratedTeaser(token: string | null): Promise<TeaserResult | null> {
+  if (!token) return null;
+
+  try {
+    const response = await fetch(`${BASE_URL}/videos/last-generated`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    const teaser = data?.teaser;
+    if (!teaser || !teaser.teaser_url) {
+      return null;
+    }
+
+    const fullTeaserUrl = teaser.teaser_url.startsWith('http')
+      ? teaser.teaser_url
+      : `${BASE_URL}${teaser.teaser_url}`;
+
+    const clipsMapped = (teaser.clips || []).map((clip: any) => ({
+      clip_id: clip.clip_id || 'clip',
+      start: clip.start || 0,
+      end: clip.end || 0,
+      duration: clip.duration || 0,
+      reason: clip.reason || '',
+      clip_url: clip.clip_url?.startsWith('http') ? clip.clip_url : `${BASE_URL}${clip.clip_url}`,
+    }));
+
+    const totalDuration = clipsMapped.reduce((sum: number, c: any) => sum + (c.duration || 0), 0);
+    const combinedExcerpt = clipsMapped.map((c: any) => c.reason).filter(Boolean).join(' | ');
+
+    return {
+      videoUrl: fullTeaserUrl,
+      filename: teaser.filename || `${teaser.video_id || 'video'}_teaser.mp4`,
+      durationSeconds: Math.round(totalDuration || 15),
+      highlightsCount: clipsMapped.length,
+      transcriptExcerpt: combinedExcerpt || undefined,
+      aspectRatio: '16:9',
+      clips: clipsMapped,
+    };
+  } catch (error) {
+    console.warn('Failed to fetch last generated teaser from MongoDB:', error);
+    return null;
+  }
+}

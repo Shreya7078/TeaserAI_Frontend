@@ -7,7 +7,7 @@ export const LandingPage: React.FC = () => {
   const { user } = useAuth();
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div className="fade-in" style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
       {/* Topographic Background Overlay */}
       <div className="topo-pattern" />
 
@@ -80,6 +80,7 @@ export const LandingPage: React.FC = () => {
         <div className="grid-2">
           <div className="glass-card">
             <div
+              className="icon-bounce"
               style={{
                 width: '44px',
                 height: '44px',
@@ -90,6 +91,7 @@ export const LandingPage: React.FC = () => {
                 justifyContent: 'center',
                 color: 'var(--primary-pink)',
                 marginBottom: '1rem',
+                transition: 'transform 0.3s ease',
               }}
             >
               <Video size={22} />
@@ -102,6 +104,7 @@ export const LandingPage: React.FC = () => {
 
           <div className="glass-card">
             <div
+              className="icon-bounce"
               style={{
                 width: '44px',
                 height: '44px',
@@ -112,6 +115,7 @@ export const LandingPage: React.FC = () => {
                 justifyContent: 'center',
                 color: 'var(--primary-cyan)',
                 marginBottom: '1rem',
+                transition: 'transform 0.3s ease',
               }}
             >
               <Scissors size={22} />

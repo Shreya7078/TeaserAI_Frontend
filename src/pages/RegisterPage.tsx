@@ -80,19 +80,11 @@ export const RegisterPage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '80vh',
-      padding: '1rem',
+      padding: '1.5rem',
     }}>
-      <div className="card" style={{
-        width: '100%',
-        maxWidth: '420px',
-        padding: '2.5rem',
-        background: 'rgba(30, 27, 38, 0.45)',
-        backdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '16px',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <div className="auth-card fade-in">
+        <div className="glow-spot-auth" />
+        <div style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
           <h2 style={{ fontSize: '1.8rem', color: '#fff', marginBottom: '0.5rem' }}>Create Account</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Get started with TeaserAI</p>
         </div>
@@ -109,6 +101,7 @@ export const RegisterPage: React.FC = () => {
             color: '#f87171',
             fontSize: '0.85rem',
             marginBottom: '1.5rem',
+            position: 'relative'
           }}>
             <AlertCircle size={18} style={{ flexShrink: 0 }} />
             <span>{error}</span>
@@ -127,18 +120,19 @@ export const RegisterPage: React.FC = () => {
             color: '#34d399',
             fontSize: '0.85rem',
             marginBottom: '1.5rem',
+            position: 'relative'
           }}>
             <CheckCircle size={18} style={{ flexShrink: 0 }} />
             <span>Registration successful! Logging you in...</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="email" style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+            <label htmlFor="email" className="auth-label">
               Email Address
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="auth-input-wrapper">
               <Mail size={18} style={{
                 position: 'absolute',
                 left: '12px',
@@ -154,28 +148,16 @@ export const RegisterPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem 0.75rem 2.5rem',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '0.95rem',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--primary-pink)'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+                className="auth-input"
               />
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="password" style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+            <label htmlFor="password" className="auth-label">
               Password
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="auth-input-wrapper">
               <Lock size={18} style={{
                 position: 'absolute',
                 left: '12px',
@@ -191,28 +173,16 @@ export const RegisterPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem 0.75rem 2.5rem',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '0.95rem',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--primary-pink)'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+                className="auth-input"
               />
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="confirmPassword" style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-muted)' }}>
+            <label htmlFor="confirmPassword" className="auth-label">
               Confirm Password
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="auth-input-wrapper">
               <Lock size={18} style={{
                 position: 'absolute',
                 left: '12px',
@@ -228,19 +198,7 @@ export const RegisterPage: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem 0.75rem 2.5rem',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '0.95rem',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--primary-pink)'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+                className="auth-input"
               />
             </div>
           </div>
@@ -250,8 +208,8 @@ export const RegisterPage: React.FC = () => {
             disabled={isLoading}
             className="btn-primary"
             style={{
-              padding: '0.75rem',
-              borderRadius: '8px',
+              padding: '0.85rem',
+              borderRadius: '10px',
               fontWeight: 600,
               display: 'flex',
               justifyContent: 'center',
@@ -260,6 +218,7 @@ export const RegisterPage: React.FC = () => {
               border: 'none',
               cursor: isLoading ? 'not-allowed' : 'pointer',
               marginTop: '0.5rem',
+              width: '100%'
             }}
           >
             {isLoading ? (
@@ -274,7 +233,7 @@ export const RegisterPage: React.FC = () => {
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+        <div style={{ marginTop: '1.75rem', textAlign: 'center', fontSize: '0.9rem', position: 'relative' }}>
           <span style={{ color: 'var(--text-muted)' }}>Already have an account? </span>
           <Link to="/login" style={{ color: 'var(--primary-pink)', textDecoration: 'none', fontWeight: 500 }}>
             Sign In

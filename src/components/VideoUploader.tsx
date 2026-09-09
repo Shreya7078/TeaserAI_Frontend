@@ -51,6 +51,13 @@ export const VideoUploader: React.FC<VideoUploaderProps> = ({
       return;
     }
 
+    // Strict constraint: Max file size 1GB
+    const MAX_FILE_SIZE_BYTES = 1024 * 1024 * 1024; // 1 GB
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setErrorMessage(`File size (${formatFileSize(file.size)}) exceeds the maximum allowed limit of 1GB.`);
+      return;
+    }
+
     const videoInfo: SelectedVideoInfo = {
       file,
       name: file.name,
@@ -222,7 +229,7 @@ export const VideoUploader: React.FC<VideoUploaderProps> = ({
               Click or drag & drop video here
             </h4>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1rem' }}>
-              Supports MP4, MOV, WebM, AVI (Only 1 video file)
+              Supports MP4, MOV, WebM, MKV (Max 1GB • 1 video file)
             </p>
 
             <span

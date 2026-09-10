@@ -1,7 +1,11 @@
 import { TeaserResult, SelectedVideoInfo } from '../types/teaser';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'https://api.teaser.velyx.me').replace(/\/$/, '');
 const FILE_FIELD = import.meta.env.VITE_API_FILE_FIELD || 'file';
+
+function resolveApiUrl(path: string): string {
+  return path.startsWith('http') ? path : `${BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+}
 
 export async function uploadVideoToBackend(file: File, token: string | null): Promise<{ success: boolean; videoId?: string; message?: string }> {
   const formData = new FormData();
@@ -198,28 +202,23 @@ export async function processVideoTeaser(
     }
 
     const data = await response.json();
-    if (!data.clips || data.clips.length === 0) {
-      throw new Error("No highlight clips could be generated from this video.");
+    if (!data.teaser_url) {
+      throw new Error("The server response did not include a generated teaser URL.");
     }
 
     // Map all clips to absolute urls and correct structure
-    const clipsMapped = data.clips.map((clip: any) => {
-      const fullUrl = clip.clip_url.startsWith('http')
-        ? clip.clip_url
-        : `${BASE_URL}${clip.clip_url}`;
+    const clipsMapped = (data.clips || []).map((clip: any) => {
       return {
         clip_id: clip.clip_id,
         start: clip.start,
         end: clip.end,
         duration: clip.duration,
         reason: clip.reason,
-        clip_url: fullUrl,
+        clip_url: resolveApiUrl(clip.clip_url),
       };
     });
 
-    const fullTeaserUrl = data.teaser_url
-      ? (data.teaser_url.startsWith('http') ? data.teaser_url : `${BASE_URL}${data.teaser_url}`)
-      : clipsMapped[0].clip_url;
+    const fullTeaserUrl = resolveApiUrl(data.teaser_url);
 
     const totalDuration = clipsMapped.reduce((sum: number, c: any) => sum + (c.duration || 0), 0);
     const combinedExcerpt = clipsMapped.map((c: any) => c.reason).filter(Boolean).join(' | ');
@@ -227,7 +226,7 @@ export async function processVideoTeaser(
     return {
       videoUrl: fullTeaserUrl,
       filename: `${data.video_id}_teaser.mp4`,
-      durationSeconds: Math.round(totalDuration || 15),
+      durationSeconds: Math.round(totalDuration || data.duration || 15),
       highlightsCount: clipsMapped.length,
       transcriptExcerpt: combinedExcerpt || 'No transcription highlight text available.',
       aspectRatio: '16:9',
@@ -237,9 +236,8 @@ export async function processVideoTeaser(
     isCompleted = true;
     clearInterval(interpolationTimer);
     eventSource.close();
-    // If backend connection fails, we can fall back to the mock flow for a smoother UX
-    console.warn('Real backend call failed. Falling back to mock data.', error);
-    return processVideoTeaserMock(videoInfo, token, onProgress);
+    console.error('Real backend call failed.', error);
+    throw error;
   }
 }
 
@@ -267,9 +265,7 @@ export async function fetchLastGeneratedTeaser(token: string | null): Promise<Te
       return null;
     }
 
-    const fullTeaserUrl = teaser.teaser_url.startsWith('http')
-      ? teaser.teaser_url
-      : `${BASE_URL}${teaser.teaser_url}`;
+    const fullTeaserUrl = resolveApiUrl(teaser.teaser_url);
 
     const clipsMapped = (teaser.clips || []).map((clip: any) => ({
       clip_id: clip.clip_id || 'clip',
@@ -277,7 +273,7 @@ export async function fetchLastGeneratedTeaser(token: string | null): Promise<Te
       end: clip.end || 0,
       duration: clip.duration || 0,
       reason: clip.reason || '',
-      clip_url: clip.clip_url?.startsWith('http') ? clip.clip_url : `${BASE_URL}${clip.clip_url}`,
+      clip_url: resolveApiUrl(clip.clip_url),
     }));
 
     const totalDuration = clipsMapped.reduce((sum: number, c: any) => sum + (c.duration || 0), 0);

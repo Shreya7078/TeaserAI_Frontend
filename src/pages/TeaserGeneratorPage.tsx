@@ -4,7 +4,7 @@ import { ProcessingState } from '../components/ProcessingState';
 import { VideoPreview } from '../components/VideoPreview';
 import { ProcessingStatus, PipelineStep, SelectedVideoInfo, TeaserResult } from '../types/teaser';
 import { processVideoTeaser, fetchLastGeneratedTeaser } from '../services/teaserApi';
-import { ArrowLeft, AlertCircle, PlayCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, AlertCircle, PlayCircle, Sparkles, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 
@@ -113,12 +113,42 @@ export const TeaserGeneratorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Global Error Banner */}
+      {/* Teaser generation errors need attention without shifting the workspace layout. */}
       {status === 'ERROR' && errorMessage && (
-        <div className="alert-banner alert-error" style={{ maxWidth: '700px', margin: '0 auto 1.5rem' }}>
-          <AlertCircle size={20} />
-          <div>
-            <strong>Generation Failed:</strong> {errorMessage}
+        <div className="error-popup-backdrop" role="presentation">
+          <div
+            className="error-popup"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="teaser-error-title"
+            aria-describedby="teaser-error-message"
+          >
+            <button
+              type="button"
+              className="error-popup-close"
+              onClick={() => setErrorMessage(null)}
+              aria-label="Close error message"
+              title="Close"
+            >
+              <X size={18} />
+            </button>
+            <div className="error-popup-icon">
+              <AlertCircle size={22} />
+            </div>
+            <div className="error-popup-content">
+              <h2 id="teaser-error-title">Teaser generation failed</h2>
+              <p id="teaser-error-message">{errorMessage}</p>
+              <div className="error-popup-actions">
+                <button type="button" className="btn-secondary" onClick={() => setErrorMessage(null)}>
+                  Close
+                </button>
+                {selectedVideo && (
+                  <button type="button" className="btn-primary" onClick={handleGenerateTeaser}>
+                    Try Again
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
